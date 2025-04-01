@@ -1,0 +1,127 @@
+{% include 'teacher_header.html' %}
+<style>
+    /* Assignment form styles */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 20px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.form-card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    width: 80%;
+    max-width: 700px;
+}
+
+.page-title {
+    text-align: center;
+    font-size: 24px;
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* Table Styles */
+.form-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.form-table th, .form-table td {
+    padding: 12px 15px;
+    font-size: 16px;
+    text-align: left;
+}
+
+.form-table th {
+    font-weight: 600;
+    color: #34495e;
+    width: 30%;
+    vertical-align: middle;  /* Ensure correct alignment */
+}
+
+.form-table td {
+    width: 70%;
+    vertical-align: middle;
+}
+
+/* Input and Textarea Styles */
+.form-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #dce0e3;
+    font-size: 16px;
+    outline: none;
+    transition: border 0.3s ease;
+}
+
+.form-input:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+.form-textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Button Styles */
+.submit-btn {
+    display: inline-block;
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    background: #3498db;
+    color: white;
+    border: none;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.submit-btn:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+}
+
+</style>
+<div class="form-container">
+    <div class="form-card">
+        <h1 class="page-title">Create New Assignment</h1>
+        
+        <form action="" method="post">
+            {% csrf_token %}
+            <table class="form-table">
+                <tr>
+                    <th>Assignment:</th>
+                    <td><input type="text" name="assignment" class="form-input" placeholder="Enter assignment title" required></td>
+                </tr>
+                <tr>
+                    <th>Due Date:</th>
+                    <td><input type="date" name="date" class="form-input" required></td>
+                </tr>
+                <tr>
+                    <th>Description:</th>
+                    <td><textarea name="desc" class="form-input form-textarea" placeholder="Enter assignment description" required></textarea></td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td><input type="submit" name="submit" value="Create Assignment" class="submit-btn"></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+
+{% include 'footer.html' %}

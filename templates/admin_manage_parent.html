@@ -1,0 +1,277 @@
+{% include 'admin_header.html' %}
+
+<style>
+    /* Scoped styles for parent management */
+    .parent-management {
+        padding: 2rem;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    .parent-management .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .parent-management h4 {
+        font-size: 24px;
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 2rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+
+    .parent-management .form-container {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .parent-management .form-table {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .parent-management .form-table th {
+        color: #34495e;
+        font-weight: 500;
+        text-align: right;
+        padding: 1rem;
+        width: 30%;
+        vertical-align: middle;
+    }
+
+    .parent-management .form-table td {
+        padding: 1rem;
+    }
+
+    .parent-management .form-table input:not([type="submit"]) {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .parent-management .form-table input:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
+        outline: none;
+    }
+
+    .parent-management input[type="submit"] {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+        margin: 1.5rem auto;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        min-width: 150px;
+    }
+
+    .parent-management input[type="submit"]:hover {
+        background: linear-gradient(135deg, #2980b9 0%, #2573a7 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(41,128,185,0.3);
+    }
+
+    .parent-management .data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        margin-top: 2rem;
+        overflow: hidden;
+    }
+
+    .parent-management .data-table th {
+        background: #34495e;
+        color: white;
+        padding: 1rem;
+        text-align: left;
+        font-weight: 500;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .parent-management .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e0e0e0;
+        color: #2c3e50;
+        font-size: 14px;
+    }
+
+    .parent-management .data-table tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .parent-management .data-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .parent-management .action-links a {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        margin: 0 0.25rem;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .parent-management .action-links a:first-child {
+        background: #3498db;
+        color: white !important;
+    }
+
+    .parent-management .action-links a:last-child {
+        background: #e74c3c;
+        color: white !important;
+    }
+    
+
+    .parent-management .action-links a:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .parent-management {
+            padding: 1rem;
+        }
+
+        .parent-management .form-table th {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 0.5rem 1rem;
+        }
+
+        .parent-management .form-table td {
+            display: block;
+            padding: 0 1rem 1rem;
+        }
+
+        .parent-management .data-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+    }
+</style>
+
+<div class="parent-management">
+    <div class="container">
+        <h4>Manage Parents</h4>
+        <form action="" method="post">
+            <div class="form-container">
+                {% if ff %}
+                <table class="form-table">
+                    <tr>
+                        <th>Name:</th>
+                        <td><input type="text" value="{{ff.name}}" name="name" placeholder="Enter name" required></td>
+                    </tr>
+                    <tr>
+                        <th>Relation:</th>
+                        <td><input type="text" value="{{ff.relation}}" name="relation"   placeholder="Enter relation" required></td>
+                    </tr>
+                    <tr>
+                        <th>Address:</th>
+                        <td><input type="text" value="{{ff.address}}" name="address"  placeholder="Enter address" required></td>
+                    </tr>
+                    <tr>
+                        <th>Phone No:</th>
+                        <td><input type="tel" value="{{ff.phone_no}}" name="phone_no"  placeholder="Enter phone number" required></td>
+                    </tr>
+                    <tr>
+                        <th>Email:</th>
+                        <td><input type="email" value="{{ff.email}}" name="email"  placeholder="Enter email" required></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input type="submit" name="update" value="Update">
+                        </td>
+                    </tr>
+                </table>
+                {% else %}
+                <table class="form-table">
+                    <tr>
+                        <th>Name:</th>
+                        <td><input type="text" name="name"  placeholder="Enter name" required></td>
+                    </tr>
+                    
+                    <tr>
+                        <th>Address:</th>
+                        <td><input type="text" name="address"  placeholder="Enter address" required></td>
+                    </tr>
+                    <tr>
+                        <th>Phone No:</th>
+                        <td><input type="tel" name="phone_no"  placeholder="Enter phone number" required></td>
+                    </tr>
+                    <tr>
+                        <th>Email:</th>
+                        <td><input type="email" name="email"  placeholder="Enter email"required></td>
+                    </tr>
+                    <tr>
+                        <th>Username:</th>
+                        <td><input type="text" name="usrname"  placeholder="Enter username"required></td>
+                    </tr>
+                    <tr>
+                        <th>Password:</th>
+                        <td><input type="password" name="passwd"  placeholder="Enter Password" required></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input type="submit" name="submit" value="Submit">
+                        </td>
+                    </tr>
+                </table>
+                {% endif %}
+            </div>
+
+            <table class="data-table">
+                <tr>
+                    
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Phone Number</th>
+                    <th>Email</th>
+                    <th colspan="2">Actions</th>
+                </tr>
+                {% for i in dd %}
+                <tr>
+                    
+                    <td>{{i.name}}</td>
+                
+                    <td>{{i.address}}</td>
+                    <td>{{i.phone_no}}</td>
+                    <td>{{i.email}}</td>
+                    <td class="action-links">
+                        <a href="/admin_manage_parent_update/{{i.id}}">Update</a><br>
+                        <a href="/admin_manage_parent_delete/{{i.id}}">Delete</a>
+                        <a href="/admin_student/{{i.id}}">Manage Student</a>
+
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </form>
+    </div>
+</div>
+
+{% include 'footer.html' %}

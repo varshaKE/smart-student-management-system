@@ -1,0 +1,270 @@
+{% include 'teacher_header.html' %}
+<style>
+/* Assignments Page Styling */
+.students-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 20px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.student-card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 15px 25px rgba(0,0,0,0.1);
+    width: 90%;
+    max-width: 900px;
+}
+
+.page-title {
+    text-align: center;
+    font-size: 28px;
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.students-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.students-table thead {
+    background: #2980b9;
+    color: white;
+}
+
+.students-table th, .students-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.students-table th {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.students-table tbody tr:hover {
+    background: #f1f1f1;
+}
+
+.no-data {
+    text-align: center;
+    font-size: 18px;
+    color: #888;
+    padding: 20px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #218838;
+}
+
+.grade-label {
+    font-weight: bold;
+    color: #2c3e50;
+    font-size: 16px;
+}
+
+.mark-input {
+    width: 60px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.grade-display {
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 10px;
+    text-align: center;
+    display: inline-block;
+}
+
+/* Grade Colors */
+.grade-A { background: #4CAF50; color: white; } /* A */
+.grade-B { background: #8BC34A; color: white; } /* B */
+.grade-C { background: #FFC107; color: black; } /* C */
+.grade-D { background: #FF9800; color: white; } /* D */
+.grade-F { background: #F44336; color: white; } /* F */
+
+</style>
+
+<form action="" method="post">
+    {% csrf_token %}
+    <div class="students-container">
+        <div class="student-card animated">
+            <h1 class="page-title">Assignments Submitted by {{ student.name }}</h1>
+    
+            {% if assignments %}
+            <table class="students-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Assignment</th>
+                        <th>Subject</th>
+                        <th>Submission Date</th>
+                        <th>Status</th>
+                        <th>Marks</th>
+                        <th>Grade</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for upload in assignments %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ upload.assignment.assignment }}</td>
+                        <td>{{ upload.assignment.subject.subject_name }}</td>
+                        <td>{{ upload.date }}</td>
+                        <td>{{ upload.status }}</td>
+                        {% if upload.status == 'Pending' %}
+                        <td>
+                            <input type="number" class="mark-input" id="marks_{{ upload.id }}" name="marks" min="0" max="100" placeholder="0-100" 
+                                   oninput="convertGrade('{{ upload.id }}')">
+                            <button type="button" class="btn btn-success" onclick="saveMarks('{{ upload.id }}')">Save</button>
+                        </td>
+                        {% else %}
+                        <td>
+                            {{ upload.marks }}
+                        </td>
+                        {% endif %}
+                        <td>
+                            <span id="grade_{{ upload.id }}" class="grade-display">
+                                {% if upload.marks %}
+                                    {% if upload.marks >= 90 %}
+                                        <span class="grade-display grade-A">A+</span>
+                                    {% elif upload.marks >= 80 %}
+                                        <span class="grade-display grade-A">A</span>
+                                    {% elif upload.marks >= 70 %}
+                                        <span class="grade-display grade-B">B</span>
+                                    {% elif upload.marks >= 60 %}
+                                        <span class="grade-display grade-C">C</span>
+                                    {% elif upload.marks >= 50 %}
+                                        <span class="grade-display grade-D">D</span>
+                                    {% else %}
+                                        <span class="grade-display grade-F">F</span>
+                                    {% endif %}
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="/static/media/{{upload.file}}" class="btn btn-success" download>Download</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="no-data">No assignments submitted yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</form>
+
+<script>
+    function convertGrade(id) {
+        let marks = document.getElementById("marks_" + id).value;
+        let gradeSpan = document.getElementById("grade_" + id);
+        console.log(id);
+        let grade = "";
+        let gradeClass = "";
+    
+        if (marks >= 90) {
+            grade = "A+";
+            gradeClass = "grade-A";
+        } else if (marks >= 80) {
+            grade = "A";
+            gradeClass = "grade-A";
+        } else if (marks >= 70) {
+            grade = "B";
+            gradeClass = "grade-B";
+        } else if (marks >= 60) {
+            grade = "C";
+            gradeClass = "grade-C";
+        } else if (marks >= 50) {
+            grade = "D";
+            gradeClass = "grade-D";
+        } else {
+            grade = "F";
+            gradeClass = "grade-F";
+        }
+    
+        gradeSpan.textContent = grade;
+        gradeSpan.className = "grade-display " + gradeClass;
+    }
+    
+    function saveMarks(id) {
+        let marks = document.getElementById("marks_" + id).value;
+        
+        if (!marks) {
+            alert("Please enter marks before saving");
+            return;
+        }
+    
+        fetch("/add_marks/" + id + "/", {  // Added trailing slash for Django URL pattern
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: "marks=" + marks
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log("Marks updated successfully.");
+    
+                // Update status text in the table
+                document.querySelector(`#marks_${id}`).closest("tr").children[4].textContent = "Graded";
+     // Update status text in the table
+            document.querySelector(`#marks_${id}`).closest("tr").children[4].textContent = "Graded";
+
+            // Update grade in the table
+            let gradeSpan = document.getElementById("grade_" + id);
+            gradeSpan.textContent = data.grade;
+            gradeSpan.className = "grade-display " + getGradeClass(data.grade);
+
+                // Show success alert
+                alert("Marks updated successfully!");
+                
+                // Refresh the page to show updated status
+                window.location.reload();
+            } else {
+                console.error("Error updating marks:", data.error);
+                alert("Error updating marks: " + data.error);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again.");
+        });
+    }
+</script>
+
+{% include 'footer.html' %}

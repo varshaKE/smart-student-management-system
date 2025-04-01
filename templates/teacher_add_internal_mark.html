@@ -1,0 +1,281 @@
+{% include 'teacher_header.html' %}
+
+<style>
+    .internal-marks-container {
+        padding: 2rem;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 80vh;
+    }
+
+    .marks-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        padding: 2rem;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .student-info {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+
+    .student-name {
+        font-size: 1.5rem;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+
+    .student-details {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .marks-form {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .select-control {
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        width: 100%;
+        background: white;
+        cursor: pointer;
+        transition: border-color 0.3s;
+    }
+
+    .select-control:focus {
+        border-color: #4a90e2;
+        outline: none;
+    }
+
+    .marks-input {
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        width: 100%;
+        transition: all 0.3s;
+    }
+
+    .marks-input:focus {
+        border-color: #4a90e2;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(74,144,226,0.1);
+    }
+
+    .marks-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+    }
+
+    .submit-btn {
+        background: #2c3e50;
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        width: fit-content;
+    }
+
+    .submit-btn:hover {
+        background: #34495e;
+        transform: translateY(-2px);
+    }
+
+    .marks-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 2rem;
+    }
+
+    .marks-table th {
+        background: #2c3e50;
+        color: white;
+        padding: 1rem;
+        text-align: left;
+    }
+
+    .marks-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .marks-table tr:hover {
+        background: #f8f9fa;
+    }
+
+    .validation-message {
+        color: #e74c3c;
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+        display: none;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+
+    .error {
+        animation: shake 0.5s;
+        border-color: #e74c3c;
+    }
+</style>
+
+<div class="internal-marks-container">
+    <div class="marks-card">
+        <div class="student-info">
+            <div class="student-name">{{ student.name }}</div>
+            <div class="student-details">
+                Department: {{ student.dept.dept_name }} | Course: {{ student.course.course_name }}
+            </div>
+        </div>
+
+        <form class="marks-form" id="internalMarksForm">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Select Semester</label>
+                <select class="select-control" id="semesterSelect" required>
+                    <option value="">Choose Semester</option>
+                    {% for sem in semesters %}
+                        <option value="{{ sem.id }}">{{ sem.sem }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Select Subject</label>
+                <select class="select-control" id="subjectSelect" required disabled>
+                    <option value="">Choose Subject</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Internal Marks (Out of 20)</label>
+                <input type="number" class="marks-input" id="marksInput" min="0" max="20" required>
+                <span class="validation-message">Marks must be between 0 and 20</span>
+            </div>
+
+            <button type="submit" class="submit-btn">Add Internal Marks</button>
+        </form>
+
+        <div id="existingMarks">
+            <table class="marks-table">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Semester</th>
+                        <th>Marks</th>
+                        <th>Date Added</th>
+                    </tr>
+                </thead>
+                <tbody id="marksTableBody">
+                    {% for mark in existing_marks %}
+                    <tr>
+                        <td>{{ mark.subject.subject_name }}</td>
+                        <td>{{ mark.subject.sem.sem }}</td>
+                        <td>{{ mark.marks }}/20</td>
+                        <td>{{ mark.date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('internalMarksForm');
+    const semesterSelect = document.getElementById('semesterSelect');
+    const subjectSelect = document.getElementById('subjectSelect');
+    const marksInput = document.getElementById('marksInput');
+    const validationMessage = document.querySelector('.validation-message');
+
+    // Load subjects when semester is selected
+    semesterSelect.addEventListener('change', function() {
+        const semesterId = this.value;
+        if (semesterId) {
+            fetch(`/get_subjects/${semesterId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    subjectSelect.innerHTML = '<option value="">Choose Subject</option>';
+                    data.forEach(subject => {
+                        subjectSelect.innerHTML += `<option value="${subject.id}">${subject.subject_name}</option>`;
+                    });
+                    subjectSelect.disabled = false;
+                });
+        } else {
+            subjectSelect.disabled = true;
+            subjectSelect.innerHTML = '<option value="">Choose Subject</option>';
+        }
+    });
+
+    // Validate marks input
+    marksInput.addEventListener('input', function() {
+        const value = parseInt(this.value);
+        if (value < 0 || value > 20 || isNaN(value)) {
+            validationMessage.style.display = 'block';
+            this.classList.add('error');
+        } else {
+            validationMessage.style.display = 'none';
+            this.classList.remove('error');
+        }
+    });
+
+    // Form submission with confirmation
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const marks = parseInt(marksInput.value);
+        if (marks < 0 || marks > 20 || isNaN(marks)) {
+            alert('Please enter valid marks between 0 and 20');
+            return;
+        }
+
+        if (confirm('Are you sure you want to add these internal marks? This action cannot be undone.')) {
+            const formData = {
+                subject_id: subjectSelect.value,
+                marks: marks,
+                student_id: '{{ student.id }}'
+            };
+
+            fetch('/add_internal_marks/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Internal marks added successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            });
+        }
+    });
+});
+</script>
+
+{% include 'footer.html' %}

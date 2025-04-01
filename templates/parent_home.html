@@ -1,0 +1,50 @@
+{% include 'parent_header.html' %}
+
+<style>
+    /* Scope styles to avoid affecting other elements */
+    .home-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        background: url('/static/assets/img/parentchild.webp') no-repeat center center;
+        background-size: cover;
+        background-attachment: fixed; /* Optional: Keeps the background fixed while scrolling */
+        width: 100%;
+        height: 100vh; 
+        padding: 20px;
+    }
+
+    .home-content {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 15px 25px rgba(0,0,0,0.1);
+        text-align: center;
+        max-width: 500px;
+        transform: translateY(0);
+        transition: all 0.3s ease;
+    }
+
+    .home-content:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+    }
+
+    .home-content h1 {
+        font-size: 32px;
+        color: #2c3e50;
+        font-weight: 600;
+        font-family: 'Segoe UI', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+</style>
+
+<div class="home-container">
+    <div class="home-content">
+        <h1>WELCOME HOME</h1>
+    </div>
+</div>
+
+{% include 'footer.html' %}

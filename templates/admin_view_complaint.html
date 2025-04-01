@@ -1,0 +1,44 @@
+{% include 'admin_header.html' %}
+
+<body>
+    <center>
+        <form action="" method="post">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Complaint</th>
+                        <th>Reply</th>
+                        <th>Date</th>
+                        <th>Student Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in look %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ i.complaint }}</td>
+                        <td>{{ i.reply }}</td>
+                        <td>{{ i.date }}</td>
+                        <td>{{ i.student_name }}</td>
+                        <td>
+                            {% if i.reply == "pending" %}
+                            <div>
+                                <input type="hidden" name="complaint_id" value="{{ i.id }}">
+                                <input type="text" name="reply" placeholder="Enter your reply">
+                                <button type="submit" name="submit">
+                                    Submit
+                                </button>
+                            </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+    </center>
+</body>
+
+{% include 'footer.html' %}

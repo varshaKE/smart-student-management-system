@@ -1,0 +1,116 @@
+{% include 'parent_header.html' %}
+
+<style>
+    .semester-container {
+        padding: 20px;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .student-info {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .semester-select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .marks-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .marks-table th, .marks-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .marks-table th {
+        background-color: #2c3e50;
+        color: white;
+    }
+
+    .marks-table tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .no-marks {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+    }
+
+    @media (max-width: 768px) {
+        .semester-container {
+            padding: 10px;
+        }
+    }
+</style>
+
+<div class="semester-container">
+    <div class="student-info">
+        <h3>Student: {{ student.name }}</h3>
+        <p>Department: {{ student.dept.dept_name }}</p>
+        <p>Course: {{ student.course.course_name }}</p>
+    </div>
+
+    <select class="semester-select" id="semesterSelect" onchange="loadMarks()">
+        <option value="">Select Semester</option>
+        {% for sem in semesters %}
+            <option value="{{ sem.id }}" {% if selected_semester == sem.id %}selected{% endif %}>
+                {{ sem.sem }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <div id="marksContainer">
+        {% if marks %}
+            <table class="marks-table">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Internal Marks</th>
+                        <th>Assignment Marks</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mark in marks %}
+                    <tr>
+                        <td>{{ mark.subject.subject_name }}</td>
+                        <td>{{ mark.internal_marks }}</td>
+                        <td>{{ mark.assignment_marks }}</td>
+                        <td>{{ mark.status }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="no-marks">Select a semester to view marks</div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function loadMarks() {
+        const semesterId = document.getElementById('semesterSelect').value;
+        const studentId = '{{ student.id }}';
+        if (semesterId) {
+            window.location.href = `/parent_view_semester/${studentId}?semester=${semesterId}`;
+        }
+    }
+</script>
+
+{% include 'footer.html' %}

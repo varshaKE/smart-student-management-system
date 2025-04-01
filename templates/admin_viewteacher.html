@@ -1,0 +1,187 @@
+{% include 'admin_header.html' %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        color: #2c3e50;
+        font-size: 24px;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    label {
+        display: block;
+        font-weight: 600;
+        margin-top: 15px;
+        color: #34495e;
+    }
+
+    select, input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        border: 2px solid #e0e0e0;
+        border-radius: 5px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    select:focus, input[type="text"]:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        outline: none;
+    }
+
+    button {
+        display: block;
+        width: 100%;
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+    }
+
+    button:hover {
+        background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+    }
+</style>
+<body>
+    <center>
+        <div class="container">
+            <h2>Select Teacher and View Subjects</h2>
+            <form action="" method="post">
+                {% csrf_token %}
+                
+                <!-- Teacher Dropdown -->
+                <label>Teacher:</label>
+                <select id="teacher" name="selected_teacher">
+                    <option value="">Select Teacher</option>
+                    {% for teacher in teachers %}
+                    <option value="{{ teacher.id }}" data-dept="{{ teacher.dept.id }}" data-deptname="{{ teacher.dept.dept_name }}">{{ teacher.name }}</option>
+                    {% endfor %}
+                </select>
+    
+                <!-- Department (Auto-filled as Text) -->
+                <label>Department:</label>
+                <input type="text" id="department" disabled>
+    
+                <!-- Course Dropdown -->
+                <label>Course:</label>
+                <select id="course" disabled>
+                    <option value="">Select Course</option>
+                    {% for course in courses %}
+                    <option value="{{ course.id }}" data-dept="{{ course.dept.id }}">{{ course.course_name }}</option>
+                    {% endfor %}
+                </select>
+    
+                <!-- Semester Dropdown -->
+                <label>Semester:</label>
+                <select id="semester" disabled>
+                    <option value="">Select Semester</option>
+                    {% for semester in semesters %}
+                    <option value="{{ semester.id }}" data-course="{{ semester.course.id }}">{{ semester.sem }}</option>
+                    {% endfor %}
+                </select>
+    
+                <!-- Subject Dropdown -->
+                <label>Subject:</label>
+                <select id="subject" name="selected_subject" disabled>
+                    <option value="">Select Subject</option>
+                    {% for subject in subjects %}
+                    <option value="{{ subject.id }}" data-semester="{{ subject.sem.id }}">{{ subject.subject_name }}</option>
+                    {% endfor %}
+                </select>
+                 <!-- Submit Button -->
+                 <br><br>
+                 <button type="submit" name="submit" id="submitBtn">Submit</button>
+            </form>
+        </div>
+    </center>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const teacherSelect = document.getElementById("teacher");
+            const departmentField = document.getElementById("department");
+            const courseSelect = document.getElementById("course");
+            const semesterSelect = document.getElementById("semester");
+            const subjectSelect = document.getElementById("subject");
+        
+            // Store all courses initially
+            const allCourses = Array.from(courseSelect.options).slice(1); // Exclude "Select Course"
+            const allSemesters = Array.from(semesterSelect.options).slice(1);
+            const allSubjects = Array.from(subjectSelect.options).slice(1);
+        
+            // Enable & Auto-fill department based on teacher selection
+            teacherSelect.addEventListener("change", function() {
+                let selectedDeptId = this.options[this.selectedIndex].getAttribute("data-dept");
+                let selectedDeptName = this.options[this.selectedIndex].getAttribute("data-deptname");
+        
+                if (selectedDeptId) {
+                    departmentField.value = selectedDeptName; // Auto-fill department as text
+                } else {
+                    departmentField.value = "";
+                }
+        
+                // Reset and filter courses based on department
+                courseSelect.innerHTML = '<option value="">Select Course</option>';
+                const filteredCourses = allCourses.filter(course => course.getAttribute("data-dept") === selectedDeptId);
+                filteredCourses.forEach(course => courseSelect.appendChild(course));
+        
+                courseSelect.disabled = filteredCourses.length === 0;
+        
+                // Reset other dropdowns
+                semesterSelect.innerHTML = '<option value="">Select Semester</option>';
+                subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+                semesterSelect.disabled = true;
+                subjectSelect.disabled = true;
+            });
+        
+            // Enable & Filter Semesters based on Course
+            courseSelect.addEventListener("change", function() {
+                let selectedCourse = this.value;
+        
+                semesterSelect.innerHTML = '<option value="">Select Semester</option>';
+                const filteredSemesters = allSemesters.filter(sem => sem.getAttribute("data-course") === selectedCourse);
+                filteredSemesters.forEach(sem => semesterSelect.appendChild(sem));
+        
+                semesterSelect.disabled = filteredSemesters.length === 0;
+                subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+                subjectSelect.disabled = true;
+            });
+        
+            // Enable & Filter Subjects based on Semester
+            semesterSelect.addEventListener("change", function() {
+                let selectedSemester = this.value;
+        
+                subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+                const filteredSubjects = allSubjects.filter(sub => sub.getAttribute("data-semester") === selectedSemester);
+                filteredSubjects.forEach(sub => subjectSelect.appendChild(sub));
+        
+                subjectSelect.disabled = filteredSubjects.length === 0;
+            });
+        });
+        
+    </script>
+</body>
+
+{% include 'footer.html' %}

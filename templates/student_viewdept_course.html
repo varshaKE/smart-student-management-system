@@ -1,0 +1,473 @@
+{% include 'student_header.html' %}
+
+<style>
+    /* Assignment viewer styles */
+    .assignment-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 20px;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .assignment-card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 15px 25px rgba(0,0,0,0.1);
+        width: 80%;
+        max-width: 900px;
+        transform: translateY(0);
+        transition: all 0.3s ease;
+    }
+
+    .assignment-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 32px;
+        color: #2c3e50;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+    }
+
+    .department-course-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    .dept-course-box {
+        background: #f8f9fa;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-weight: 500;
+        color: #2c3e50;
+        flex: 1;
+        margin: 0 10px;
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .filters-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .filter-group {
+        display: flex;
+        align-items: center;
+        margin: 0 10px;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-right: 10px;
+        white-space: nowrap;
+    }
+
+    select {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: white;
+        color: #333;
+        font-size: 15px;
+        min-width: 180px;
+        transition: all 0.3s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    select:focus {
+        outline: none;
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+    }
+
+    select:hover {
+        border-color: #aaa;
+    }
+
+    .assignment-details {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+
+    .assignment-details.visible {
+        animation: fadeIn 0.5s ease forwards;
+    }
+
+    .detail-row {
+        display: flex;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        color: #2c3e50;
+        min-width: 120px;
+    }
+
+    .detail-value {
+        flex: 1;
+        color: #333;
+    }
+
+    /* File upload styles */
+    .upload-section {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eaeaea;
+    }
+
+    .file-upload-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .file-input-group {
+        display: flex;
+        align-items: center;
+    }
+
+    .custom-file-upload {
+        display: inline-block;
+        padding: 10px 15px;
+        background: #4a90e2;
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: 500;
+    }
+
+    .custom-file-upload:hover {
+        background: #3a7bc8;
+    }
+    
+    .custom-file-upload.disabled {
+        background: #95a5a6;
+        cursor: not-allowed;
+    }
+
+    .file-name {
+        margin-left: 10px;
+        color: #666;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    .submit-btn {
+        background: #2c3e50;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        align-self: flex-end;
+        margin-top: 15px;
+    }
+
+    .submit-btn:hover {
+        background: #1e2b38;
+        transform: translateY(-2px);
+    }
+
+    .submit-btn:disabled {
+        background: #95a5a6;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .due-date-warning {
+        color: #e74c3c;
+        font-weight: 600;
+        margin-top: 10px;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="assignment-container">
+    <div class="assignment-card">
+        <h1 class="page-title">Assignment Portal</h1>
+        
+        <div class="department-course-info">
+            <div class="dept-course-box">Department: {{ std.dept.dept_name }}</div>
+            <div class="dept-course-box">Course: {{ std.course.course_name }}</div>
+        </div>
+        
+        <form action="" method="post" enctype="multipart/form-data" id="assignmentForm">
+            {% csrf_token %}
+            
+            <div class="filters-row">
+                <div class="filter-group">
+                    <label class="filter-label">Semester:</label>
+                    <select id="semester" name="selected_semester">
+                        <option value="">Select Semester</option>
+                        {% for sem in semesters %}
+                        <option value="{{ sem.id }}">{{ sem.sem }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Subject:</label>
+                    <select id="subject" name="selected_subject">
+                        <option value="">Select Subject</option>
+                        {% for subject in subjects %}
+                        <option value="{{ subject.id }}" data-sem="{{ subject.sem.id }}">{{ subject.subject_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Assignment:</label>
+                    <select id="assignment" name="selected_assignment">
+                        <option value="">Select Assignment</option>
+                        {% for assignment in assignments %}
+                        <option value="{{ assignment.id }}" data-subject="{{ assignment.subject.id }}" 
+                                data-teacher="{{ assignment.teacher.name }}" 
+                                data-due="{{ assignment.due_date }}" 
+                                data-desc="{{ assignment.description }}">
+                            {{ assignment.assignment }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div id="assignment-details" class="assignment-details" style="display: none;">
+                <div class="detail-row">
+                    <div class="detail-label">Teacher:</div>
+                    <div class="detail-value" id="teacher-name"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Due Date:</div>
+                    <div class="detail-value" id="due-date"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Description:</div>
+                    <div class="detail-value" id="description"></div>
+                </div>
+                
+                <div class="upload-section">
+                    <div class="file-upload-container">
+                        <div class="file-input-group">
+                            <label for="assignment-file" id="file-upload-label" class="custom-file-upload">
+                                <i class="fas fa-cloud-upload-alt"></i> Choose File
+                            </label>
+                            <input type="file" id="assignment-file" name="assignment_file" accept="image/*">
+                            <span class="file-name" id="file-name-display">No file chosen</span>
+                        </div>
+                        <div id="due-date-message" class="due-date-warning" style="display: none;">
+                            The due date has passed. You can no longer submit this assignment.
+                        </div>
+                        <button type="submit" name="submit" class="submit-btn" id="submit-btn" disabled>Submit Assignment</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hidden fields to track current selections -->
+            <input type="hidden" id="current-assignment-id" name="assignment_id" value="">
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const assignmentForm = document.getElementById("assignmentForm");
+        const semesterSelect = document.getElementById("semester");
+        const subjectSelect = document.getElementById("subject");
+        const assignmentSelect = document.getElementById("assignment");
+        const assignmentDetails = document.getElementById("assignment-details");
+        const fileInput = document.getElementById("assignment-file");
+        const fileNameDisplay = document.getElementById("file-name-display");
+        const submitBtn = document.getElementById("submit-btn");
+        const currentAssignmentId = document.getElementById("current-assignment-id");
+        const fileUploadLabel = document.getElementById("file-upload-label");
+        const dueDateMessage = document.getElementById("due-date-message");
+
+        const teacherName = document.getElementById("teacher-name");
+        const dueDate = document.getElementById("due-date");
+        const description = document.getElementById("description");
+
+        // Store all subjects and assignments initially
+        const allSubjects = Array.from(subjectSelect.options).slice(1);
+        const allAssignments = Array.from(assignmentSelect.options).slice(1);
+
+        // Function to check if due date has passed
+        function isDueDatePassed(dateString) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const dueDateObj = new Date(dateString);
+            dueDateObj.setHours(0, 0, 0, 0);
+            
+            return today > dueDateObj;
+        }
+
+        // Function to disable file upload if due date has passed
+        function checkDueDate(dueDateString) {
+            if (isDueDatePassed(dueDateString)) {
+                // Disable file upload
+                fileInput.disabled = true;
+                fileUploadLabel.classList.add("disabled");
+                fileUploadLabel.style.pointerEvents = "none";
+                submitBtn.disabled = true;
+                dueDateMessage.style.display = "block";
+                return true;
+            } else {
+                // Enable file upload
+                fileInput.disabled = false;
+                fileUploadLabel.classList.remove("disabled");
+                fileUploadLabel.style.pointerEvents = "auto";
+                // Still keep submit button disabled until a file is chosen
+                submitBtn.disabled = fileInput.files.length === 0;
+                dueDateMessage.style.display = "none";
+                return false;
+            }
+        }
+
+        // Handle semester change - refresh page with semester parameter
+        semesterSelect.addEventListener("change", function() {
+            let selectedSemester = this.value;
+            if (selectedSemester) {
+                // Add the semester to the URL and refresh
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('semester', selectedSemester);
+                window.location.href = currentUrl.toString();
+            }
+        });
+
+        // Filter subjects based on selected semester
+        function filterSubjectsBySemester(semesterId) {
+            subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+            
+            if (!semesterId) return;
+            
+            const filteredSubjects = allSubjects.filter(sub => sub.getAttribute("data-sem") === semesterId);
+            filteredSubjects.forEach(sub => subjectSelect.appendChild(sub.cloneNode(true)));
+            
+            subjectSelect.disabled = filteredSubjects.length === 0;
+            assignmentSelect.innerHTML = '<option value="">Select Assignment</option>';
+            assignmentSelect.disabled = true;
+            assignmentDetails.style.display = "none";
+        }
+
+        // Filter assignments based on selected subject
+        subjectSelect.addEventListener("change", function() {
+            let selectedSubject = this.value;
+            assignmentSelect.innerHTML = '<option value="">Select Assignment</option>';
+
+            if (!selectedSubject) {
+                assignmentSelect.disabled = true;
+                assignmentDetails.style.display = "none";
+                return;
+            }
+
+            const filteredAssignments = allAssignments.filter(ass => ass.getAttribute("data-subject") === selectedSubject);
+            filteredAssignments.forEach(ass => assignmentSelect.appendChild(ass.cloneNode(true)));
+
+            assignmentSelect.disabled = filteredAssignments.length === 0;
+            assignmentDetails.style.display = "none";
+        });
+
+        // Display assignment details when an assignment is selected
+        assignmentSelect.addEventListener("change", function() {
+            let selectedOption = assignmentSelect.options[assignmentSelect.selectedIndex];
+
+            if (selectedOption.value) {
+                const assignmentDueDate = selectedOption.getAttribute("data-due");
+                
+                teacherName.textContent = selectedOption.getAttribute("data-teacher");
+                dueDate.textContent = assignmentDueDate;
+                description.textContent = selectedOption.getAttribute("data-desc");
+                currentAssignmentId.value = selectedOption.value;
+                
+                assignmentDetails.style.display = "none"; // First hide
+                setTimeout(() => {
+                    assignmentDetails.style.display = "block"; // Then show with animation
+                    assignmentDetails.classList.add("visible");
+                    
+                    // Check if due date has passed and disable file upload if needed
+                    checkDueDate(assignmentDueDate);
+                }, 50);
+                
+                // Reset file input when changing assignments
+                fileInput.value = "";
+                fileNameDisplay.textContent = "No file chosen";
+                submitBtn.disabled = true;
+            } else {
+                assignmentDetails.style.display = "none";
+                currentAssignmentId.value = "";
+            }
+        });
+        
+        // File input change handler
+        fileInput.addEventListener("change", function() {
+            if (this.files && this.files[0]) {
+                fileNameDisplay.textContent = this.files[0].name;
+                // Only enable submit if the due date hasn't passed
+                const assignmentDueDate = dueDate.textContent;
+                if (!isDueDatePassed(assignmentDueDate)) {
+                    submitBtn.disabled = false;
+                }
+            } else {
+                fileNameDisplay.textContent = "No file chosen";
+                submitBtn.disabled = true;
+            }
+        });
+        
+        // Check if URL has semester parameter and set it
+        const urlParams = new URLSearchParams(window.location.search);
+        const semesterParam = urlParams.get('semester');
+        
+        if (semesterParam) {
+            // Find and select the semester option
+            for (let i = 0; i < semesterSelect.options.length; i++) {
+                if (semesterSelect.options[i].value === semesterParam) {
+                    semesterSelect.selectedIndex = i;
+                    filterSubjectsBySemester(semesterParam);
+                    break;
+                }
+            }
+        }
+    });
+</script>
+
+{% include 'footer.html' %}

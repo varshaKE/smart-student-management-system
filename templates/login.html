@@ -1,0 +1,122 @@
+<style>
+    /* Scope all styles to the login form to avoid affecting header/footer */
+   
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: url('/static/assets/img/all.webp') no-repeat center center/cover;
+        padding: 20px;
+    }
+    
+    .login-form {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 15px 25px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 400px;
+        transform: translateY(0);
+        transition: all 0.3s ease;
+    }
+    
+    .login-form:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+    }
+    
+    .login-form table {
+        width: 100%;
+    }
+    
+    .login-form th {
+        font-size: 28px;
+        color: #2c3e50;
+        padding-bottom: 30px;
+        font-weight: 600;
+        text-align: center;
+        font-family: 'Segoe UI', sans-serif;
+    }
+    
+    .login-form td {
+        padding: 10px 0;
+    }
+    
+    .login-form input[type="text"],
+    .login-form input[type="password"] {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        margin-top: 8px;
+    }
+    
+    .login-form input[type="text"]:focus,
+    .login-form input[type="password"]:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
+        outline: none;
+    }
+    
+    .login-form input[type="submit"] {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+        margin-top: 20px;
+    }
+    
+    .login-form input[type="submit"]:hover {
+        background: linear-gradient(135deg, #2980b9 0%, #2573a7 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(41,128,185,0.3);
+    }
+    
+    /* Label styling */
+    .login-form label {
+        display: block;
+        font-size: 14px;
+        color: #7f8c8d;
+        margin-bottom: 5px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    </style>
+    
+    {% include 'public_header.html' %}
+    <div class="login-container">
+        <form action="" method="post" class="login-form">
+            <table>
+                <th>LOGIN</th>
+                <tr>
+                    <td>
+                        <label for="username">User Name</label>
+                        <input type="text" name="username" id="username" placeholder="Enter username" class="form-control" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password" placeholder="Enter password" class="form-control" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <input type="submit" name="submit" value="Sign In">
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    {% include 'footer.html' %}

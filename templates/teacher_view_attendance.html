@@ -1,0 +1,441 @@
+{% include 'teacher_header.html' %}
+
+
+<style>
+    /* Assignment marks viewer styles */
+    .marks-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 20px;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .marks-card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 15px 25px rgba(0,0,0,0.1);
+        width: 80%;
+        max-width: 900px;
+        transform: translateY(0);
+        transition: all 0.3s ease;
+    }
+
+    .marks-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 32px;
+        color: #2c3e50;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+    }
+
+    .student-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    .info-box {
+        background: #f8f9fa;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-weight: 500;
+        color: #2c3e50;
+        flex: 1;
+        margin: 0 10px;
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .semester-select-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-right: 10px;
+        white-space: nowrap;
+    }
+
+    select {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: white;
+        color: #333;
+        font-size: 15px;
+        min-width: 180px;
+        transition: all 0.3s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    select:focus {
+        outline: none;
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+    }
+
+    select:hover {
+        border-color: #aaa;
+    }
+
+    .assignments-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .assignments-table th {
+        background: #2c3e50;
+        color: white;
+        padding: 12px 15px;
+        text-align: left;
+        font-weight: 500;
+    }
+
+    .assignments-table tr {
+        background: #f8f9fa;
+        transition: all 0.3s;
+    }
+
+    .assignments-table tr:nth-child(even) {
+        background: #eef1f5;
+    }
+
+    .assignments-table tr:hover {
+        background: #e6eaf0;
+    }
+
+    .assignments-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .assignments-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .status-pending {
+        color: #e67e22;
+        font-weight: 600;
+    }
+
+    .status-graded {
+        color: #27ae60;
+        font-weight: 600;
+    }
+
+    .status-rejected {
+        color: #e74c3c;
+        font-weight: 600;
+    }
+
+    .view-btn {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .view-btn:hover {
+        background: #2980b9;
+        transform: translateY(-2px);
+    }
+
+    .no-assignments {
+        text-align: center;
+        padding: 30px;
+        color: #7f8c8d;
+        font-size: 18px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+
+    .apply-btn {
+        background: #2c3e50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-left: 10px;
+    }
+
+    .apply-btn:hover {
+        background: #1e2b38;
+        transform: translateY(-2px);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+
+<!-- Search Bar -->
+<div class="semester-select-container">
+    <label class="filter-label">Search by Date:</label>
+    <input type="text" id="searchInput" placeholder="Type date (YYYY-MM-DD)" 
+           style="padding: 10px 15px; border-radius: 8px; border: 1px solid #ddd; width: 250px; font-size: 15px;">
+&nbsp;&nbsp;&nbsp;&nbsp;
+    <label class="filter-label">Filter by Month:</label>
+
+    <select id="monthSelect" 
+        style="padding: 10px 15px; border-radius: 8px; border: 1px solid #ddd; width: 250px; font-size: 15px;">
+    <option value="" disabled selected>Select a month</option>
+    <!-- {% for month, count in month_data.items %}
+        <option value="{{ month }}" data="{{ count }}">{{ month }}</option>
+    {% endfor %} -->
+    <option value="01">January</option>
+    <option value="02">February</option>
+    <option value="03">March</option>
+    <option value="04">April</option>
+    <option value="05">May</option>
+    <option value="06">June</option>
+    <option value="07">July</option>
+    <option value="08">August</option>
+    <option value="09">September</option>
+    <option value="10">October</option>
+    <option value="11">November</option>
+    <option value="12">December</option>
+</select>
+</div>
+
+<table class="assignments-table" id="attendanceTable">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in assignments %}
+        <tr>
+            
+            <td>{{ i.at_date }}</td>
+            <td>Attend</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% include 'footer.html' %}
+
+<!-- ✅ Live Search Script -->
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const table = document.getElementById('attendanceTable').getElementsByTagName('tbody')[0];
+
+    searchInput.addEventListener('keyup', function () {
+        const filter = searchInput.value.toLowerCase();
+        const rows = table.getElementsByTagName('tr');
+
+        for (let i = 0; i < rows.length; i++) {
+            const dateCell = rows[i].getElementsByTagName('td')[0];
+            if (dateCell) {
+                const dateText = dateCell.textContent || dateCell.innerText;
+                if (dateText.toLowerCase().indexOf(filter) > -1) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+    });
+
+
+    // Filter By Month
+
+    // const monthSelect = document.getElementById('monthSelect');
+    // const tab = document.getElementById('attendanceTable').getElementsByTagName('tbody')[0];
+
+
+    // monthSelect.addEventListener('change', function () {
+    //     const selectedMonth = monthSelect.value; // Get selected month (e.g., "03" for March)
+    //     const tot = monthSelect.data; // get weekday count for selected month
+    //     console.log("weekday : ",tot);
+    //     const rows = tab.getElementsByTagName('tr');
+
+    //     for (let i = 0; i < rows.length; i++) {
+    //         const dateCell = rows[i].getElementsByTagName('td')[0]; // Assuming at_date is in the second column
+
+    //         if (dateCell) {
+    //             const dateText = dateCell.textContent.trim() || dateCell.innerText.trim(); // Remove extra spaces
+                
+    //             // console.log("Raw date text:", dateText); // Debugging output
+
+    //             const dateParts = dateText.split(" "); // Splitting words in "March 29, 2025, 9 a.m."
+    //             const monthName = dateParts[0]; // Extract "March"
+
+                
+
+    //                 // Calculate Attendance Percentage
+    //                 let attendancePercentage = (10 / 20) * 100;
+                    
+    //                 if (monthName === selectedMonth) {
+    //                     rows[i].style.display = "";
+    //                 } else {
+    //                     rows[i].style.display = "none";
+    //                 }
+    //         }
+    //     }
+    //     // Calculate attendance percentage
+    //     let attendancePercentage = (10 / 20) * 100;
+
+    //     // Display the result **after the table**
+    //     let attendanceDisplay = document.getElementById("attendanceResult");
+
+    //     if (!attendanceDisplay) {
+    //         // Create an element if it doesn't exist
+    //         attendanceDisplay = document.createElement("p");
+    //         attendanceDisplay.id = "attendanceResult";
+    //         document.getElementById("attendanceTable").after(attendanceDisplay); // Append after table
+    //     }
+
+    //     // Update the text content with the calculated percentage
+    //     // Reverse lookup: Get the month name from the numeric value
+    //     const mon = Object.keys(monthMap).find(key => monthMap[key] === selectedMonth);
+    //     attendanceDisplay.textContent = `Attendance for ${mon}: ${attendancePercentage.toFixed(2)}%`;
+    // });
+
+
+    function getWeekdaysInMonth(year, month) {
+        let count = 0;
+        let daysInMonth = new Date(year, month, 0).getDate(); // Total days in month
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            let date = new Date(year, month - 1, day); // Create date object
+            let dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
+
+            if (dayOfWeek >= 1 && dayOfWeek <= 5) { // Monday-Friday
+                count++;
+            }
+        }
+        return count; // Total weekdays in the month
+    }
+
+    function getWeekdaysTillToday(year, month) {
+        let today = new Date();
+        let currentMonth = today.getMonth() + 1; // Get current month (1-12)
+        let currentYear = today.getFullYear();
+
+        if (month < currentMonth || year < currentYear) {
+            // If the selected month is in the past, return total weekdays in that month
+            return getWeekdaysInMonth(year, month);
+        } else if (month > currentMonth || year > currentYear) {
+            // If the selected month is in the future, return 0
+            return 0;
+        } else {
+            // If it's the current month, count weekdays till today
+            let count = 0;
+            for (let day = 1; day <= today.getDate(); day++) {
+                let date = new Date(year, month - 1, day);
+                let dayOfWeek = date.getDay();
+
+                if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+                    count++;
+                }
+            }
+            return count;
+        }
+    }
+
+    const monthSelect = document.getElementById('monthSelect');
+    const tab = document.getElementById('attendanceTable').getElementsByTagName('tbody')[0];
+
+    const monthMap = {
+    "January": "01", "February": "02", "March": "03", "April": "04",
+    "May": "05", "June": "06", "July": "07", "August": "08",
+    "September": "09", "October": "10", "November": "11", "December": "12"
+    };
+
+    monthSelect.addEventListener('change', function () {
+        const selectedMonth = monthSelect.value; // Get selected month (e.g., "03" for March)
+        const rows = table.getElementsByTagName('tr');
+        // const countatt = 0;
+
+        for (let i = 0; i < rows.length; i++) {
+            const dateCell = rows[i].getElementsByTagName('td')[0]; // Assuming at_date is in the second column
+
+            if (dateCell) {
+                const dateText = dateCell.textContent.trim() || dateCell.innerText.trim(); // Remove extra spaces
+                
+                console.log("Raw date text:", dateText); // Debugging output
+
+                const dateParts = dateText.split(" "); // Splitting words in "March 29, 2025, 9 a.m."
+                const monthName = dateParts[0]; // Extract "March"
+
+                if (monthMap[monthName]) {
+                    const month = monthMap[monthName]; // Convert "March" → "03"
+
+                    console.log("Extracted month:", month); // Debugging output
+
+                    if (month === selectedMonth) {
+                        rows[i].style.display = "";
+                        // countatt += 1;
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+                } else {
+                    console.log("Invalid date format detected:", dateText); // Debugging output
+                }
+            }
+        }
+
+        // let year = new Date().getFullYear();
+
+        // // Get the number of weekdays till today (or total for past months, 0 for future months)
+        // let weekdayCount = getWeekdaysTillToday(year, selectedMonth);
+        
+        // // Calculate attendance percentage
+        // let attendancePercentage = (countatt / (weekdayCount)) * 100;
+
+        // // Display the result **after the table**
+        // let attendanceDisplay = document.getElementById("attendanceResult");
+
+        // if (!attendanceDisplay) {
+        //     // Create an element if it doesn't exist
+        //     attendanceDisplay = document.createElement("p");
+        //     attendanceDisplay.id = "attendanceResult";
+        //     document.getElementById("attendanceTable").after(attendanceDisplay); // Append after table
+        // }
+
+        // // Update the text content with the calculated percentage
+        // // Reverse lookup: Get the month name from the numeric value
+        // const mon = Object.keys(monthMap).find(key => monthMap[key] === selectedMonth);
+        // attendanceDisplay.textContent = `Attendance for ${mon}: ${attendancePercentage.toFixed(2)}%`;
+    });
+
+</script>

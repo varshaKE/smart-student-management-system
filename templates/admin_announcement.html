@@ -1,0 +1,175 @@
+{% include 'admin_header.html' %}
+
+<style>
+    .manage-course-page .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 20px;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .manage-course-page .card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 15px 25px rgba(0,0,0,0.1);
+        width: 80%;
+        max-width: 800px;
+    }
+
+    .manage-course-page .title {
+        text-align: center;
+        font-size: 28px;
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .manage-course-page form table {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .manage-course-page th, .manage-course-page td {
+        padding: 12px;
+        text-align: left;
+    }
+
+    .manage-course-page th {
+        background: #2c3e50;
+        color: white;
+    }
+
+    .manage-course-page input[type="text"] {
+        padding: 8px;
+        width: 100%;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+    }
+
+    .manage-course-page input[type="submit"] {
+        padding: 8px 15px;
+        border-radius: 6px;
+        background: #3498db;
+        color: white;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 15px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .manage-course-page input[type="submit"]:hover {
+        background: #2980b9;
+    }
+
+    .manage-course-page table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #f8f9fa;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-top: 20px;
+    }
+
+    .manage-course-page th, .manage-course-page td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .manage-course-page tr:hover {
+        background: #e3e7eb;
+    }
+
+    .manage-course-page .btn {
+        padding: 8px 15px;
+        border-radius: 6px;
+        background: #3498db;
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s;
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .manage-course-page .btn:hover {
+        background: #2980b9;
+    }
+
+    .manage-course-page .btn-danger {
+        background: #e74c3c;
+    }
+
+    .manage-course-page .btn-danger:hover {
+        background: #c0392b;
+    }
+</style>
+
+<div class="manage-course-page">
+    <div class="container">
+        <div class="card">
+            <h1 class="title">Manage Announcements</h1>
+            
+            <!-- Form for Adding/Editing Announcement -->
+            <form action="" method="post">
+                {% if announ %}
+                    <!-- Editing existing announcement -->
+                    <table>
+                        <tr>
+                            <th>Announcement:</th>
+                            <td><input type="text" name="ano" value="{{ announ.announcement }}"></td>
+                        </tr>
+                        <input type="hidden" name="id" value="{{ announ.id }}">
+                        <tr>
+                            <td colspan="2"><input type="submit" value="Update" name="update"></td>
+                        </tr>
+                    </table>
+                {% else %}
+                    <!-- Adding new announcement -->
+                    <table>
+                        <tr>
+                            <th>Announcement:</th>
+                            <td><input type="text" name="ano"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><input type="submit" value="Submit" name="submit"></td>
+                        </tr>
+                    </table>
+                {% endif %}
+            </form>
+            
+            <!-- Displaying Announcements -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Announcement</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in ann %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ i.announcement }}</td>
+                            <td>
+                                <a href="/admin_anueedit/{{ i.id }}" class="btn">Edit</a>
+                                <a href="/admin_anudelete/{{ i.id }}" class="btn btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}

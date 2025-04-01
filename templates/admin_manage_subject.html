@@ -1,0 +1,131 @@
+{% include 'admin_header.html' %}
+
+<style>
+    .manage-page .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 20px;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .manage-page .card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 15px 25px rgba(0,0,0,0.1);
+        width: 80%;
+        max-width: 800px;
+    }
+
+    .manage-page .title {
+        text-align: center;
+        font-size: 28px;
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .manage-page table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #f8f9fa;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-top: 20px;
+    }
+
+    .manage-page th, .manage-page td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .manage-page th {
+        background: #2c3e50;
+        color: white;
+    }
+
+    .manage-page tr:hover {
+        background: #e3e7eb;
+    }
+
+    .manage-page .btn {
+        padding: 8px 15px;
+        border-radius: 6px;
+        background: #3498db;
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s;
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .manage-page .btn:hover {
+        background: #2980b9;
+    }
+
+    .manage-page input[type="text"], 
+    .manage-page input[type="submit"] {
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        width: 100%;
+    }
+
+    .manage-page input[type="submit"] {
+        background: #2c3e50;
+        color: white;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .manage-page input[type="submit"]:hover {
+        background: #1e2b38;
+    }
+</style>
+
+<div class="manage-page">
+    <div class="container">
+        <div class="card">
+            <h1 class="title">Manage Subjects</h1>
+            <form action="" method="post">
+                <table>
+                    <tr>
+                        <th>Subject Name:</th>
+                        <td><input type="text" name="sname" value="{% if sub %}{{ sub.subject_name }}{% endif %}"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input type="submit" value="{% if sub %}Update{% else %}Add{% endif %}" name="{% if sub %}update{% else %}submit{% endif %}">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+            <table>
+                <tr>
+                    <th>#</th>
+                    <th>Subject Name</th>
+                    <th>Actions</th>
+                </tr>
+                {% for i in sname %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ i.subject_name }}</td>
+                    <td>
+                        <a href="/admin_subedit/{{ i.id }}" class="btn">Update</a>
+                        <a href="/admin_subdelete/{{ i.id }}" class="btn" style="background: #e74c3c;">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}

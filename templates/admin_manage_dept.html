@@ -1,0 +1,133 @@
+{% include 'admin_header.html' %}
+
+<style>
+    .manage-department-page .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 20px;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .manage-department-page .card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 15px 25px rgba(0,0,0,0.1);
+        width: 80%;
+        max-width: 800px;
+    }
+
+    .manage-department-page .title {
+        text-align: center;
+        font-size: 28px;
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .manage-department-page table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #f8f9fa;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-top: 20px;
+    }
+
+    .manage-department-page th, .manage-department-page td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .manage-department-page th {
+        background: #2c3e50;
+        color: white;
+    }
+
+    .manage-department-page tr:hover {
+        background: #e3e7eb;
+    }
+
+    .manage-department-page .btn {
+        padding: 8px 15px;
+        border-radius: 6px;
+        background: #3498db;
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s;
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .manage-department-page .btn:hover {
+        background: #2980b9;
+    }
+
+    .manage-department-page input[type="text"], 
+    .manage-department-page input[type="submit"] {
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        width: 100%;
+    }
+
+    .manage-department-page input[type="submit"] {
+        background: #2c3e50;
+        color: white;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .manage-department-page input[type="submit"]:hover {
+        background: #1e2b38;
+    }
+</style>
+
+<div class="manage-department-page">
+    <div class="container">
+        <div class="card">
+            <h1 class="title">Manage Departments</h1>
+            <form action="" method="post">
+                <table>
+                    <tr>
+                        <th>Department Name:</th>
+                        <td><input type="text" name="dept" value="{% if dept %}{{ dept.dept_name }}{% endif %}"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input type="submit" value="{% if dept %}Update{% else %}Add{% endif %}" name="{% if dept %}update{% else %}submit{% endif %}">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+
+            <table>
+                <tr>
+                    <th>#</th>
+                    <th>Department</th>
+                    <th>Actions</th>
+                </tr>
+                {% for dept in depts %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ dept.dept_name }}</td>
+                    <td>
+                        <a href="/admindept_edit/{{ dept.id }}" class="btn">Edit</a>
+                        <a href="/admindept_delete/{{ dept.id }}" class="btn" style="background: #e74c3c;">Delete</a>
+                        <a href="/admin_manage_course/{{ dept.id }}" class="btn" style="background: #27ae60;">Manage Course</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}

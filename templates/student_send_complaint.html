@@ -1,0 +1,162 @@
+{% include 'student_header.html' %}
+
+<body>
+    <div class="detail-container">
+        <div class="detail-card">
+            <div class="page-title">Report an Issue</div>
+            <form action="" method="post">
+                <div class="info-section">
+                    <div class="input-container">
+                        <label class="info-label">Add Issues:</label>
+                        <input type="text" name="issues" class="input-field" required>
+                    </div>
+                    <div class="button-container">
+                        <button type="submit" name="submit" class="file-link">Submit</button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="page-title">Your Issues</div>
+            <div class="mark-info-container">
+                {% for issue in complaint %}
+                <div class="info-section">
+                    <div class="info-row">
+                        <span class="info-label">Issue:</span>
+                        <span class="info-value">{{ issue.complaint }}</span>
+                    </div>
+                    <div class="info-row">
+                        <button class="file-link view-reply" data-reply="{{ issue.reply }}">View Reply</button>
+                    </div>
+                    <div class="info-row reply-container" style="display: none;">
+                        <span class="info-label">Reply:</span>
+                        <span class="info-value reply-text"></span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+
+{% include 'footer.html' %}
+
+<style>
+    .detail-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 20px;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .detail-card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 15px 25px rgba(0,0,0,0.1);
+        width: 80%;
+        max-width: 800px;
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 24px;
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .info-section {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-bottom: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .input-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #34495e;
+    }
+
+    .input-field {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+    }
+
+    .button-container {
+        text-align: right;
+    }
+
+    .file-link {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 6px;
+        background: #3498db;
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .file-link:hover {
+        background: #2980b9;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .reply-container {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        padding: 10px;
+        background: #e8f0fe;
+        border-radius: 6px;
+        display: none;
+    }
+    .info-value {
+        color: coral; /* Golden color */
+        font-weight: 600;
+    }
+    
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".view-reply").forEach(button => {
+            button.addEventListener("click", function() {
+                // Close all other replies
+                document.querySelectorAll(".reply-container").forEach(container => {
+                    container.style.display = "none";
+                });
+
+                // Open only the clicked one
+                let replyText = this.getAttribute("data-reply");
+                let replyContainer = this.closest(".info-section").querySelector(".reply-container");
+                replyContainer.style.display = "block";
+                replyContainer.querySelector(".reply-text").innerText = replyText || "No reply yet";
+            });
+        });
+    });
+</script>

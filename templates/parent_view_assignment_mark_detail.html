@@ -1,0 +1,212 @@
+{% include 'parent_header.html' %}
+
+<style>
+    /* Assignment mark detail styles */
+    .detail-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 20px;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .detail-card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 15px 25px rgba(0,0,0,0.1);
+        width: 80%;
+        max-width: 800px;
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 28px;
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 30px;
+    }
+
+    .mark-info-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .info-section {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #e3e7eb;
+    }
+
+    .info-row {
+        display: flex;
+        margin-bottom: 10px;
+        align-items: center;
+    }
+
+    .info-label {
+        font-weight: 600;
+        width: 150px;
+        color: #34495e;
+    }
+
+    .info-value {
+        flex: 1;
+    }
+
+    .mark-highlight {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2980b9;
+    }
+
+    .status-pill {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .status-pending {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .status-graded {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .status-rejected {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .file-link {
+        display: inline-block;
+        padding: 8px 15px;
+        border-radius: 6px;
+        background: #3498db;
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .file-link:hover {
+        background: #2980b9;
+    }
+
+    .back-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 8px;
+        background: #2c3e50;
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        margin-top: 25px;
+        align-self: flex-start;
+        transition: all 0.3s;
+    }
+
+    .back-btn:hover {
+        background: #1e2b38;
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="detail-container">
+    <div class="detail-card">
+        <h1 class="page-title">Assignment Details & Marks</h1>
+        
+        <div class="mark-info-container">
+            <div class="info-section">
+                <h2 class="section-title">Assignment Information</h2>
+                
+                <div class="info-row">
+                    <div class="info-label">Subject:</div>
+                    <div class="info-value">{{ subject.subject_name }}</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Assignment:</div>
+                    <div class="info-value">{{ assignment.assignment }}</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Due Date:</div>
+                    <div class="info-value">{{ assignment.due_date }}</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Description:</div>
+                    <div class="info-value">{{ assignment.description }}</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Teacher:</div>
+                    <div class="info-value">{{ assignment.teacher.name }}</div>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h2 class="section-title">Submission Details</h2>
+                
+                <div class="info-row">
+                    <div class="info-label">Submission Date:</div>
+                    <div class="info-value">{{ submission.date }}</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Status:</div>
+                    <div class="info-value">
+                        <span class="status-pill status-{% if submission.status == 'Pending' %}pending{% elif submission.status == 'Graded' %}graded{% else %}rejected{% endif %}">
+                            {{ submission.status }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Marks:</div>
+                    <div class="info-value">
+                        {% if submission.marks == 'Not Graded' %}
+                            <span>{{ submission.marks }}</span>
+                        {% else %}
+                            <span class="mark-highlight">{{ submission.marks }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Submitted File:</div>
+                    <div class="info-value">
+                        <a href="/static/media/{{submission.file }}" class="file-link" target="_blank">View Submission</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <a href="{% url 'parent_view_marks' sid %}" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Marks
+        </a>
+    </div>
+</div>
+
+{% include 'footer.html' %}

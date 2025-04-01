@@ -1,0 +1,254 @@
+{% include 'teacher_header.html' %}
+
+<style>
+    /* (Keeping all your styles the same) */
+    .marks-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 20px;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .marks-card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 15px 25px rgba(0,0,0,0.1);
+        width: 80%;
+        max-width: 900px;
+        transform: translateY(0);
+        transition: all 0.3s ease;
+    }
+
+    .marks-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 32px;
+        color: #2c3e50;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+    }
+
+    .student-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    .info-box {
+        background: #f8f9fa;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-weight: 500;
+        color: #2c3e50;
+        flex: 1;
+        margin: 0 10px;
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .semester-select-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-right: 10px;
+        white-space: nowrap;
+    }
+
+    select {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: white;
+        color: #333;
+        font-size: 15px;
+        min-width: 180px;
+        transition: all 0.3s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    select:focus {
+        outline: none;
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+    }
+
+    select:hover {
+        border-color: #aaa;
+    }
+
+    .assignments-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .assignments-table th {
+        background: #2c3e50;
+        color: white;
+        padding: 12px 15px;
+        text-align: left;
+        font-weight: 500;
+    }
+
+    .assignments-table tr {
+        background: #f8f9fa;
+        transition: all 0.3s;
+    }
+
+    .assignments-table tr:nth-child(even) {
+        background: #eef1f5;
+    }
+
+    .assignments-table tr:hover {
+        background: #e6eaf0;
+    }
+
+    .assignments-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .assignments-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .status-pending {
+        color: #e67e22;
+        font-weight: 600;
+    }
+
+    .status-graded {
+        color: #27ae60;
+        font-weight: 600;
+    }
+
+    .status-rejected {
+        color: #e74c3c;
+        font-weight: 600;
+    }
+
+    .view-btn {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .view-btn:hover {
+        background: #2980b9;
+        transform: translateY(-2px);
+    }
+
+    .no-assignments {
+        text-align: center;
+        padding: 30px;
+        color: #7f8c8d;
+        font-size: 18px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+
+    .apply-btn {
+        background: #2c3e50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-left: 10px;
+    }
+
+    .apply-btn:hover {
+        background: #1e2b38;
+        transform: translateY(-2px);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<!-- Search Bar -->
+<div class="semester-select-container">
+    <label class="filter-label">Search by Date:</label>
+    <input type="text" id="searchInput" placeholder="Type date (Eg:- January 1, 2020)" 
+           style="padding: 10px 15px; border-radius: 8px; border: 1px solid #ddd; width: 250px; font-size: 15px;">
+</div>
+
+<table class="assignments-table" id="attendanceTable">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Date and Time</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in assignments %}
+        <tr>
+            <td>{{i.student.name}}</td>
+            <td>{{ i.at_date }}</td>
+            <td>Attend</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% include 'footer.html' %}
+
+<!-- ✅ Updated Live Search Script (using includes instead of startsWith) -->
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const table = document.getElementById('attendanceTable').getElementsByTagName('tbody')[0];
+
+    searchInput.addEventListener('keyup', function () {
+        const filter = searchInput.value.trim().toLowerCase();
+        const rows = table.getElementsByTagName('tr');
+
+        for (let i = 0; i < rows.length; i++) {
+            const dateCell = rows[i].getElementsByTagName('td')[1]; // Accessing the Date column
+            if (dateCell) {
+                const dateText = dateCell.textContent || dateCell.innerText;
+                if (dateText.toLowerCase().includes(filter)) {  // Now allows partial search
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+    });
+</script>

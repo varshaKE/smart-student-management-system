@@ -1,0 +1,474 @@
+    {% include 'admin_header.html' %}
+    <style>
+        /* Scoped styles for parent management */
+        .parent-management {
+            padding: 2rem;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .parent-management .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .parent-management h4 {
+            font-size: 24px;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .parent-management .form-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .parent-management .form-table {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .parent-management .form-table th {
+            color: #34495e;
+            font-weight: 500;
+            text-align: right;
+            padding: 1rem;
+            width: 30%;
+            vertical-align: middle;
+        }
+
+        .parent-management .form-table td {
+            padding: 1rem;
+        }
+
+        .parent-management .form-table input:not([type="submit"]) {
+            width: 90%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .parent-management .form-table input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
+            outline: none;
+        }
+
+        .parent-management input[type="submit"] {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 1.5rem auto;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 150px;
+        }
+
+        .parent-management input[type="submit"]:hover {
+            background: linear-gradient(135deg, #2980b9 0%, #2573a7 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(41,128,185,0.3);
+        }
+
+        .parent-management .data-table {
+            width: 70%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+            overflow: hidden;
+        }
+
+        .parent-management .data-table th {
+            background: #34495e;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 500;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .parent-management .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .parent-management .data-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .parent-management .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .parent-management .action-links a {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .parent-management .action-links a:first-child {
+            background: #3498db;
+            color: white !important;
+        }
+
+        .parent-management .action-links a:last-child {
+            background: #e74c3c;
+            color: white !important;
+        }
+
+        .parent-management .action-links a:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .parent-management select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            color: #34495e;
+            transition: all 0.3s ease;
+            appearance: none; /* Removes default dropdown styling */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="gray"><path d="M7 10l5 5 5-5H7z"/></svg>'); 
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 14px;
+        }
+        
+        /* Hover and focus effects */
+        .parent-management select:hover,
+        .parent-management select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
+            outline: none;
+        }
+
+        .parent-management .data-table-wrapper {
+            width: 100%;
+            overflow-x: auto; /* Enables horizontal scrolling */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .parent-management {
+                padding: 1rem;
+            }
+
+            .parent-management .form-table th {
+                display: block;
+                width: 100%;
+                text-align: left;
+                padding: 0.5rem 1rem;
+            }
+
+            .parent-management .form-table td {
+                display: block;
+                padding: 0 1rem 1rem;
+            }
+
+            .parent-management .data-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+        /* Styling for the Gender radio buttons */
+    .radio-group {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .radio-group input[type="radio"] {
+        display: none; /* Hide default radio button */
+    }
+
+    .radio-group label {
+        position: relative;
+        padding-left: 30px;
+        cursor: pointer;
+        font-size: 16px;
+        color: #2c3e50;
+        font-weight: 500;
+    }
+
+    .radio-group label::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 2px solid #3498db;
+        background-color: white;
+        transition: all 0.3s ease;
+    }
+
+    .radio-group input[type="radio"]:checked + label::before {
+        background-color: #3498db;
+        box-shadow: inset 0 0 0 5px white;
+    }
+
+    </style>
+
+    <body>
+        <div class="parent-management">
+            <div class="container">
+            <h4>Manage Student</h4>
+            <form action="" method="post" enctype="multipart/form-data">
+                <div class="form-container">
+
+                {% if ff %}
+                <table class="form-table">
+                    <tr>
+                        <td><label>Name:</label></td>
+                        <td><input type="text" value="{{ ff.name }}" name="name" required></td>
+                    </tr>
+                    <tr>
+                        <td><label>Address:</label></td>
+                        <td><input type="text" value="{{ ff.address }}" name="address" required></td>
+                    </tr>
+                    <tr>
+                        <td><label>Gender:</label></td>
+                        <td>
+                            <div class="radio-group">
+                                <input type="radio" id="male" value="male" name="gender" {% if ff.gender == 'male' %}checked{% endif %} required>
+                                <label for="male">Male</label>
+                                <input type="radio" id="female" value="female" name="gender" {% if ff.gender == 'female' %}checked{% endif %}>
+                                <label for="female">Female</label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="dob">Date of Birth:</label></td>
+                        <td><input type="date" value="{{ ff.dob }}" id="dob" name="dob" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="phonenumber">Phone Number:</label></td>
+                        <td><input type="tel" value="{{ ff.phone_no }}" id="phonenumber" name="phonenumber" placeholder="Enter number" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="religion">Religion:</label></td>
+                        <td><input type="text" value="{{ ff.religion }}" id="religion" name="religion" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="email">Email:</label></td>
+                        <td><input type="email" value="{{ ff.email }}" id="email" name="email" placeholder="Enter email" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="qualification">Qualification:</label></td>
+                        <td><input type="text" value="{{ ff.qualification }}" id="qualification" name="qualification" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="aadhar">Aadhar Number:</label></td>
+                        <td><input type="text" value="{{ ff.aadhaar_no }}" id="aadhar" name="aadhar" placeholder="Enter Aadhar Number" required></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="center">
+                            <button type="submit" value="Update" name="update">Submit</button>
+                        </td>
+                    </tr>
+                </table>
+                {% else %}
+                <table class="form-table">
+                    <tr>
+                        <td><label>Name:</label></td>
+                        <td><input type="text" name="name"  placeholder="Enter name" required></td>
+                    </tr>
+                    <tr>
+                        <td><label>Address:</label></td>
+                        <td><input type="text" name="address"  placeholder="Enter address" required></td>
+                    </tr>
+                    <tr>
+                        <td><label>Relation:</label></td>
+                        <td><input type="text" name="relation"   placeholder="Enter relation" required></td>
+                    </tr>
+                    <tr>
+                        <td><label>Gender:</label></td>
+                        <td>
+                            <div class="radio-group">
+                                <input type="radio" id="male" value="male" name="gender" required>
+                                <label for="male">Male</label>
+                                <input type="radio" id="female" value="female" name="gender">
+                                <label for="female">Female</label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="dob">Date of Birth:</label></td>
+                        <td><input type="date" id="dob" name="dob" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="phonenumber">Phone Number:</label></td>
+                        <td><input type="tel" id="phonenumber" name="phonenumber" placeholder="Enter number" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="religion">Religion:</label></td>
+                        <td><input type="text" id="religion" name="religion"   placeholder="Enter religion" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="email">Email:</label></td>
+                        <td><input type="email" id="email" name="email" placeholder="Enter email" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="qualification">Qualification:</label></td>
+                        <td><input type="text" id="qualification" name="qualification"   placeholder="Enter qualification" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="department">Department:</label></td>
+                        <td>
+                            <select id="department" name="department" required>
+                                <option value="" disabled selected>Select Department</option>
+                                {% for dept in departments %}
+                                <option value="{{ dept.id }}">{{ dept.dept_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td><label for="course">Course:</label></td>
+                        <td>
+                            <select id="course" name="course" required>
+                                <option value="" disabled selected>Select Course</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="aadhar">Aadhar Number:</label></td>
+                        <td><input type="text" id="aadhar" name="aadhar" placeholder="Enter Aadhaar Number" required></td>
+                    </tr>
+                    <tr> 
+                        <th>Image1</th>
+                        <td><input type="file" name="image1"></td>
+                    </tr>
+                    <tr>
+                        <th>Image2</th>
+                        <td><input type="file" name="image2"></td>
+                    </tr>
+                    <tr>
+                        <th>Image3</th>
+                        <td><input type="file" name="image3"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><input type="submit" name="Upload" value="Upload"></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><label for="username">Username:</label></td>
+                        <td><input type="text" id="username" name="username" placeholder="Enter username" required></td>
+                    </tr>
+        
+                    <tr>
+                        <td><label for="password">Password:</label></td>
+                        <td><input type="password" id="password" name="password" placeholder="Enter password" required></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="center">
+                            <button type="submit" name="submit">Submit</button>
+                        </td>
+                    </tr>
+                </table>
+                {% endif %}
+            </div>
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <tr>
+                        <th>#</th>
+                        <th>Name:</th>
+                        <th>Address:</th>
+                        <th>Gender</th>
+                        <th>DOB:</th>
+                        <th>Phone Number:</th>
+                        <th>Religion:</th>
+                        <th>Email:</th>
+                        <th>Qualification:</th>
+                        <th>Department</th>
+                        <th>Course:</th>
+                        <th>Aadhar Number</th>
+                        <th>Parent Name:</th>
+                        <th>Actions</th>
+                    </tr>
+                    {% for i in gg %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ i.name }}</td>
+                        <td>{{ i.address }}</td>
+                        <td>{{ i.gender }}</td>
+                        <td>{{ i.dob }}</td>
+                        <td>{{ i.phone_no }}</td>
+                        <td>{{ i.religion }}</td>
+                        <td>{{ i.email }}</td>
+                        <td>{{ i.qualification }}</td>
+                        <td>{{ i.dept.dept_name }}</td>
+                        <td>{{ i.course.course_name}}</td>
+                        <td>{{ i.aadhaar_no }}</td>
+                        <td>{{ i.parent.name }}</td>
+                        <td class="action-links">
+                            <a href="/admin_student_update/{{ i.id }}">Update</a>
+                            <a href="/admin_student_delete/{{ i.id }}">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            </form>
+        </div>
+    </div>
+    <!-- Store Courses in JavaScript -->
+    <script>
+        document.getElementById('department').addEventListener('change', function () {
+            var departmentId = this.value;
+            var courseDropdown = document.getElementById('course');
+    
+            // Clear existing options
+            courseDropdown.innerHTML = '<option value="" disabled selected>Select Course</option>';
+    
+            // Fetch courses from the backend
+            if (departmentId) {
+                fetch(`/get_courses?department_id=${departmentId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(function(course) {
+                            var option = document.createElement('option');
+                            option.value = course.id;
+                            option.textContent = course.course_name;
+                            courseDropdown.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching courses:', error));
+            }
+        });
+    </script>
+    
+    </body>
+    {% include 'footer.html' %}

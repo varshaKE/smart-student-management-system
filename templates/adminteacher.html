@@ -1,0 +1,335 @@
+{% include 'admin_header.html' %}
+
+<style>
+    /* Scope all styles to specific class to avoid affecting header/footer */
+    .teacher-registration-container {
+        padding: 2rem;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    .teacher-registration-container .form-container {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        max-width: 800px;
+        margin: 0 auto 2rem auto;
+    }
+
+    .teacher-registration-container .form-title {
+        font-size: 24px;
+        color: #2c3e50;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 2rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .teacher-registration-container .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .teacher-registration-container .form-grid label {
+        color: #34495e;
+        font-weight: 500;
+        align-self: center;
+    }
+
+    .teacher-registration-container .form-grid input:not([type="radio"]) {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .teacher-registration-container .form-grid input:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
+        outline: none;
+    }
+
+    .teacher-registration-container .radio-group {
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+    }
+
+    .teacher-registration-container .radio-group label {
+        margin-left: 0.5rem;
+    }
+
+    .teacher-registration-container .submit-btn {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+        margin: 2rem auto;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .teacher-registration-container .submit-btn:hover {
+        background: linear-gradient(135deg, #2980b9 0%, #2573a7 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(41,128,185,0.3);
+    }
+
+    .teacher-registration-container .table-container {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-top: 2rem;
+        overflow-x: auto;
+        max-width: 1200px;
+        margin: 2rem auto;
+    }
+
+    .teacher-registration-container .data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .teacher-registration-container .data-table th {
+        background: #34495e;
+        color: white;
+        padding: 1rem;
+        text-align: left;
+        font-weight: 500;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .teacher-registration-container .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e0e0e0;
+        color: #2c3e50;
+        font-size: 14px;
+    }
+
+    .teacher-registration-container .data-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .teacher-registration-container .data-table tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .teacher-registration-container .action-links a {
+        display: inline-block; /* Keeps links in line */
+        padding: 0.5rem 1rem;
+        margin: 0 0.25rem;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .teacher-registration-container .update-link {
+        background: #3498db;
+        color: white !important; /* Override any inherited styles */
+    }
+
+    .teacher-registration-container .delete-link {
+        background: #e74c3c;
+        color: white !important; /* Override any inherited styles */
+    }
+
+    .teacher-registration-container .action-links a:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+        /* Style for select dropdown */
+    .teacher-registration-container select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        background: white;
+        color: #34495e;
+        transition: all 0.3s ease;
+        appearance: none; /* Removes default dropdown styling */
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="gray"><path d="M7 10l5 5 5-5H7z"/></svg>'); 
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 14px;
+    }
+
+    /* Hover and focus effects */
+    .teacher-registration-container select:hover,
+    .teacher-registration-container select:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
+        outline: none;
+    }
+
+    /* Style for select options */
+    .teacher-registration-container select option {
+        padding: 0.5rem;
+        font-size: 14px;
+        color: #2c3e50;
+    }
+
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .teacher-registration-container .form-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .teacher-registration-container {
+            padding: 1rem;
+        }
+        
+        .teacher-registration-container .table-container {
+            margin: 1rem;
+            padding: 1rem;
+        }
+        
+        .teacher-registration-container .data-table th,
+        .teacher-registration-container .data-table td {
+            padding: 0.75rem 0.5rem;
+        }
+    }
+</style>
+
+<div class="teacher-registration-container">
+    <div class="form-container">
+        <form action="" method="post">
+            <h2 class="form-title">Teacher Registration</h2>
+            {% if qw %}
+            <div class="form-grid">
+                <label for="name">Name:</label>
+                <input type="text" id="name" value="{{qw.name}}" name="name" placeholder="Enter name" required>
+                
+                <label for="address">Address:</label>
+                <input type="text" id="address" value="{{qw.address}}" name="address" placeholder="Enter address" required>
+                
+                <label>Gender:</label>
+                <div class="radio-group">
+                    <input type="radio" id="male" value="male" name="gender" {% if qw.gender == 'male' %}checked{% endif %} required>
+                    <label for="male">Male</label>
+                    <input type="radio" id="female" value="female" name="gender" {% if qw.gender == 'female' %}checked{% endif %}>
+                    <label for="female">Female</label>
+                </div>
+                
+                <label for="dob">Date of Birth:</label>
+                <input type="date" id="dob" name="dob" value="{{qw.dob}}" required>
+                
+                <label for="phonenumber">Phone Number:</label>
+                <input type="tel" id="phonenumber" value="{{qw.phone_no}}" name="phonenumber" placeholder="Enter number" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="{{qw.email}}" placeholder="Enter email" required>
+                
+                <label for="qualification">Qualification:</label>
+                <input type="text" id="qualification" value="{{qw.qualification}}" name="qualification" placeholder="Enter qualification" required>
+                
+                <label for="department">Department:</label>
+                    <select id="department" name="department" required>
+                        <option value="" disabled>Select Department</option>
+                        {% for dept in departments %}
+                        <option value="{{ dept.id }}" {% if dept.id == qw.department %}selected{% endif %}>
+                            {{ dept.dept_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+            </div>
+            <input type="submit" name="update" value="Update" class="submit-btn">
+            {% else %}
+            <div class="form-grid">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" placeholder="Enter name" required>
+                
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address" placeholder="Enter address" required>
+                
+                <label>Gender:</label>
+                <div class="radio-group">
+                    <input type="radio" id="male" value="male" name="gender" required>
+                    <label for="male">Male</label>
+                    <input type="radio" id="female" value="female" name="gender">
+                    <label for="female">Female</label>
+                </div>
+                
+                <label for="dob">Date of Birth:</label>
+                <input type="date" id="dob" name="dob" required>
+                
+                <label for="phonenumber">Phone Number:</label>
+                <input type="tel" id="phonenumber" name="phonenumber" placeholder="Enter number" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Enter email" required>
+                
+                <label for="qualification">Qualification:</label>
+                <input type="text" id="qualification" name="qualification" placeholder="Enter qualification" required>
+                
+                <label for="department">Department:</label>
+                    <select id="department" name="department" required>
+                        <option value="" disabled selected>Select Department</option>
+                        {% for dept in departments %}
+                        <option value="{{ dept.id }}">{{ dept.dept_name }}</option>
+                        {% endfor %}
+                    </select>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Enter username" required>
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter password" required>
+            </div>
+            <input type="submit" name="submit" value="Register" class="submit-btn">
+            {% endif %}
+        </form>
+    </div>
+
+    <div class="table-container">
+        <table class="data-table">
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Gender</th>
+                <th>DOB</th>
+                <th>Phone No</th>
+                <th>Email</th>
+                <th>Qualification</th>
+                <th>Department</th>
+                <th>Actions</th>
+            </tr>
+            {% for i in ffg %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{i.name}}</td>
+                <td>{{i.address}}</td>
+                <td>{{i.gender}}</td>
+                <td>{{i.dob}}</td>
+                <td>{{i.phone_no}}</td>
+                <td>{{i.email}}</td>
+                <td>{{i.qualification}}</td>
+                <td>{{i.dept.dept_name}}</td>
+                <td class="action-links">
+                    <a href="/adminteacher_update/{{i.id}}" class="update-link">Update</a>
+                    <a href="/adminteacher_delete/{{i.id}}" class="delete-link">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% include 'footer.html' %}

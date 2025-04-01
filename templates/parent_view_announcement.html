@@ -1,0 +1,86 @@
+{% include 'parent_header.html' %}
+
+<body>
+    <div class="assignment-container">
+        <div class="assignment-card">
+            <h2 class="page-title">Announcements</h2>
+            <table class="announcement-table">
+                <tr>
+                    <th>#</th>
+                    <th>Announcements</th>
+                    <th>Date</th>
+                </tr>
+                {% for i in announcements %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ i.announcement }}</td>
+                    <td>{{ i.date }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</body>
+
+{% include 'footer.html' %}
+
+<style>
+    .assignment-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 20px;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .assignment-card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 15px 25px rgba(0,0,0,0.1);
+        width: 80%;
+        max-width: 900px;
+        transform: translateY(0);
+        transition: all 0.3s ease;
+    }
+
+    .assignment-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 32px;
+        color: #2c3e50;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+    }
+
+    .announcement-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .announcement-table th, .announcement-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .announcement-table th {
+        background: #2c3e50;
+        color: white;
+        font-weight: 600;
+    }
+
+    .announcement-table tr:hover {
+        background: #f1f1f1;
+    }
+</style>
